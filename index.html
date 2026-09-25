@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nova Auto Care — Follow-Up Automation (Demo)</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔧</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="demo-banner">
+  ⚙️ Messaging Simulator — no real texts are sent. A production version can connect to WhatsApp Business API, Twilio, or another SMS provider.
+</div>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark">NAC</span>
+    <div class="brand-text">
+      <strong>Nova Auto Care</strong>
+      <span>Follow-Up Automation</span>
+    </div>
+  </div>
+  <nav class="tabs" id="tabs">
+    <button class="tab-btn active" data-tab="dashboard">Dashboard</button>
+    <button class="tab-btn" data-tab="leads">Leads</button>
+    <button class="tab-btn" data-tab="campaigns">Campaigns</button>
+    <button class="tab-btn" data-tab="templates">Templates</button>
+    <button class="tab-btn" data-tab="timeline">Conversations</button>
+  </nav>
+  <div class="clock">
+    <span class="clock-label">Simulated day</span>
+    <span class="clock-value" id="simDayValue">0</span>
+  </div>
+</header>
+
+<main>
+
+  <!-- DASHBOARD -->
+  <section class="view active" id="view-dashboard">
+    <div class="view-head">
+      <h1>Automation Dashboard</h1>
+      <button class="btn btn-primary" id="simulateBtn">▶ Simulate Next Message</button>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <span class="stat-label">Active Campaigns</span>
+        <span class="stat-value" id="statActiveCampaigns">0</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Messages Sent</span>
+        <span class="stat-value" id="statMessagesSent">0</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Responses</span>
+        <span class="stat-value" id="statResponses">0</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Conversion Rate</span>
+        <span class="stat-value" id="statConversion">0%</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Follow-Ups Due</span>
+        <span class="stat-value" id="statDue">0</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Leads Recovered</span>
+        <span class="stat-value" id="statRecovered">0</span>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Queue — Next Messages Scheduled</h2>
+      <div class="table-wrap">
+        <table id="queueTable">
+          <thead>
+            <tr><th>Lead</th><th>Sequence</th><th>Step</th><th>Scheduled Day</th><th>Status</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="empty-note" id="queueEmpty">No messages scheduled yet — add a lead to start a campaign.</p>
+    </div>
+
+    <div class="panel">
+      <h2>Recent Activity</h2>
+      <ul class="activity-feed" id="activityFeed"></ul>
+    </div>
+  </section>
+
+  <!-- LEADS -->
+  <section class="view" id="view-leads">
+    <div class="view-head">
+      <h1>Leads</h1>
+    </div>
+
+    <div class="panel">
+      <h2>New Lead</h2>
+      <form id="leadForm" class="grid-form">
+        <label>Name
+          <input type="text" id="leadName" placeholder="Sarah Johnson" required>
+        </label>
+        <label>Phone
+          <input type="tel" id="leadPhone" placeholder="(555) 123-4567" required>
+        </label>
+        <label>Service Interested In
+          <input type="text" id="leadService" placeholder="Oil Change" required>
+        </label>
+        <label>Appointment Date <span class="optional">(optional)</span>
+          <input type="text" id="leadAppointment" placeholder="e.g. Thu Oct 2, 10:00 AM">
+        </label>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Add Lead + Start Welcome Sequence</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="panel">
+      <h2>All Leads</h2>
+      <div class="table-wrap">
+        <table id="leadsTable">
+          <thead>
+            <tr><th>Name</th><th>Phone</th><th>Service</th><th>Lead Date</th><th>Status</th><th>Campaign</th><th>Actions</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="empty-note" id="leadsEmpty">No leads yet. Submit the form above to create your first one.</p>
+    </div>
+  </section>
+
+  <!-- CAMPAIGNS -->
+  <section class="view" id="view-campaigns">
+    <div class="view-head">
+      <h1>Campaign Builder</h1>
+    </div>
+    <p class="section-intro">These are the automation rules that fire when a lead's status changes. Adjust the wait time before each step — new campaigns will use the updated delays.</p>
+
+    <div class="rules-grid" id="rulesGrid"></div>
+  </section>
+
+  <!-- TEMPLATES -->
+  <section class="view" id="view-templates">
+    <div class="view-head">
+      <h1>Message Templates</h1>
+    </div>
+    <p class="section-intro">Variables: <code>{{first_name}}</code> <code>{{service}}</code> <code>{{business_name}}</code> <code>{{appointment_date}}</code></p>
+    <div class="templates-list" id="templatesList"></div>
+  </section>
+
+  <!-- TIMELINE / CONVERSATIONS -->
+  <section class="view" id="view-timeline">
+    <div class="view-head">
+      <h1>Conversations</h1>
+    </div>
+    <div class="conversation-layout">
+      <div class="panel conversation-list">
+        <h2>Leads</h2>
+        <ul id="conversationLeadList"></ul>
+      </div>
+      <div class="panel conversation-thread">
+        <div id="threadHeader" class="thread-header">
+          <p class="empty-note">Select a lead to view their message timeline.</p>
+        </div>
+        <div id="threadMessages" class="thread-messages"></div>
+        <div class="thread-controls" id="threadControls"></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>Portfolio demo by Saba · Nova Auto Care is a fictional business built to showcase automated follow-up systems. No real messages are sent.</p>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
