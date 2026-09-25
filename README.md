@@ -2,7 +2,7 @@
 
 A free, fully client-side simulation of a WhatsApp/SMS automated follow-up system for a fictional auto shop, **Nova Auto Care**. Built as a portfolio piece to demonstrate lead nurturing automation, campaign logic, and CRM-style dashboards — without any paid messaging infrastructure.
 
-**Live demo:** add your GitHub Pages URL here once published.
+**Live demo:** https://sabaghanbarlo-hash.github.io/nova-followup-automation/
 
 > ⚠️ **This is a messaging simulator.** No real WhatsApp messages or SMS are sent. All "sending" is simulated inside the browser using a fake clock and `localStorage`. A production version would connect to a real provider — see [Production Path](#production-path) below.
 
